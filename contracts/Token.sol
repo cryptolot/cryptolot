@@ -157,8 +157,27 @@ contract Token {
   // @param _spender The address of the account able to transfer the tokens
   // @return Amount of remaining tokens allowed to spent
   //
-  function allowance(address _owner, address _spender) constant returns (uint256 remaining);
+  function allowance(address _owner, address _spender) constant returns (uint256 remaining) {
+    return allowed[_owner][_spender];
+  }
 
+
+  // Returns the amount which _spender is still allowed to withdraw from _owner
+  //
+  // @param _owner The address of the account owning tokens
+  // @param _amount The amount of tokens to be minted
+  // @return Amount of remaining tokens allowed to spent
+  //
+  function mintToken(address _target, uint256 _amount) onlyOwner {
+      balanceOf[_target] += _amount;
+      totalSupply += _amount;
+      Transfer(0, owner, _amount);
+      Transfer(owner, _target, _amount);
+  }
+
+
+  // Transfer and approval events
+  //
   event Transfer(address indexed _from, address indexed _to, uint256 _value);
   event Approval(address indexed _owner, address indexed _spender, uint256 _value);
   event ReceivedApproval(uint256 _value);
