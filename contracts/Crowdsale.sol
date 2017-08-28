@@ -61,7 +61,7 @@ contract Crowdsale {
   // @return Whether the approval was successful or not
   //
   function receiveApproval(address _from, uint256 _value, address _tokenContract, bytes _extraData) {
-    ReceivedApproval(_value);
+    ReceivedApproval(_from, _value, _tokenContract, _extraData);
   }
 
 
@@ -70,9 +70,8 @@ contract Crowdsale {
   //
   function withdraw() afterCrowdsale {
     if (beneficiary == msg.sender) {
-      if (beneficiary.send(amountRaised)) {
-        FundTransfer(beneficiary, amountRaised, false);
-      }
+      require(beneficiary.send(amountRaised));
+      FundTransfer(beneficiary, amountRaised, false);
     }
   }
 
@@ -92,5 +91,5 @@ contract Crowdsale {
 
   event GoalReached(address _beneficiary, uint _amountRaised);
   event FundTransfer(address _backer, uint _amount, bool _isContribution);
-  event ReceivedApproval(uint256 _value);
+  event ReceivedApproval(address _from, uint256 _value, address _tokenContract, bytes _extraData);
 }
