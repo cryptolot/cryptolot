@@ -23,6 +23,7 @@ contract Crowdsale {
 
   event GoalReached(address _beneficiary, uint _amountRaised);
   event FundTransfer(address _backer, uint _amount, bool _isContribution);
+  event ReceivedApproval(uint256 _value);
 
   bool fundingGoalReached = false;
   bool crowdsaleOpen = false;
@@ -54,6 +55,19 @@ contract Crowdsale {
     amountRaised += amount;
     tokenReward.transfer(msg.sender, amount / price);
     FundTransfer(msg.sender, amount, true);
+  }
+
+
+  // Receives the approveAndCall function call. It might be useful for
+  // intercontract communication in the future.
+  //
+  // @param _spender The address of the account able to transfer the tokens
+  // @param _value The amount of tokens to be approved for transfer
+  // @param _extraData Any extra data that might be sent
+  // @return Whether the approval was successful or not
+  //
+  function receiveApproval(address _from, uint256 _value, address _tokenContract, bytes _extraData) {
+    ReceivedApproval(_value);
   }
 
 
