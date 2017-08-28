@@ -1,7 +1,7 @@
 var Lottery = artifacts.require("./Lottery.sol");
 
 var initialAmount = 1000000;
-var tokenName = 'Cryptolot';
+var tokenName = 'Lottery';
 var tokenSymbol = 'LTRY';
 var decimalUnits = 3;
 

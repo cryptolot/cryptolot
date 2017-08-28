@@ -138,19 +138,6 @@ contract Token {
   }
 
 
-  // Receives the approveAndCall function call. It might be useful for
-  // intercontract communication in the future.
-  //
-  // @param _spender The address of the account able to transfer the tokens
-  // @param _value The amount of tokens to be approved for transfer
-  // @param _extraData Any extra data that might be sent
-  // @return Whether the approval was successful or not
-  //
-  function receiveApproval(address _from, uint256 _value, address _tokenContract, bytes _extraData) {
-    ReceivedApproval(_value);
-  }
-
-
   // Returns the amount which _spender is still allowed to withdraw from _owner
   //
   // @param _owner The address of the account owning tokens
@@ -161,5 +148,4 @@ contract Token {
 
   event Transfer(address indexed _from, address indexed _to, uint256 _value);
   event Approval(address indexed _owner, address indexed _spender, uint256 _value);
-  event ReceivedApproval(uint256 _value);
 }
