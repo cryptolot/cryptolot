@@ -1,13 +1,12 @@
-pragma solidity ^0.4.8;
+pragma solidity ^0.4.11;
 
 
 import "./Token.sol";
-import "./Owned.sol";
 
 
 // Cryptolot lottery decentralized application
 //
-contract Lottery is Token, Owned {
+contract Lottery {
   // Event participant with entry address and the number of lottery entry tokens
   //
   // @param entryAddress Participant wallet address
@@ -42,8 +41,10 @@ contract Lottery is Token, Owned {
   //
   mapping (uint => Event) public events;
   uint currentEvent;
+
   uint public eventDuration = 7 * 1 days;
   uint public eventWinnerCount = 3;
+
 
 
   // Prize pool address, public, for everyone to see and send coins to.
@@ -53,12 +54,9 @@ contract Lottery is Token, Owned {
 
   // Setup the lottery and initialize prize pool address
   //
-  function Lottery(uint256 _initialAmount, string _tokenName, string _tokenSymbol, uint8 _decimalUnits, address _prizePool) {
-    super(_initialAmount, _tokenName, _tokenSymbol, _decimalUnits);
+  function Lottery(address _prizePool) {
     prizePool = _prizePool;
   }
-
-
 
 
   // Get balance for given owner address
