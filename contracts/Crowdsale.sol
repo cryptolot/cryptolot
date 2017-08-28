@@ -1,11 +1,7 @@
 pragma solidity ^0.4.8;
 
 
-// To be replaced by actual LTRY token
-//
-contract Token {
-  function transfer(address receiver, uint amount);
-}
+import './Token.sol';
 
 
 // Crowdsale contract
@@ -21,9 +17,6 @@ contract Crowdsale {
 
   mapping(address => uint256) public balanceOf;
 
-  event GoalReached(address _beneficiary, uint _amountRaised);
-  event FundTransfer(address _backer, uint _amount, bool _isContribution);
-  event ReceivedApproval(uint256 _value);
 
   bool fundingGoalReached = false;
   bool crowdsaleOpen = false;
@@ -45,6 +38,7 @@ contract Crowdsale {
     endTime = _startTime + _duration * 1 minutes;
     tokenReward = Token(_tokenReward);
   }
+
 
   // The function without name is the default function that is called whenever
   // anyone sends funds to a contract
@@ -71,8 +65,16 @@ contract Crowdsale {
   }
 
 
-  // Check if the goal or time limit has been reached
 
+  // Withdraw the amount raised after the crowdsale
+  //
+  function withdraw() afterCrowdsale {
+    if (beneficiary == msg.sender) {
+      if (beneficiary.send(amountRaised)) {
+        FundTransfer(beneficiary, amountRaised, false);
+      }
+    }
+  }
 
 
   // Check whether the action is being called during the crowdsale
@@ -87,4 +89,8 @@ contract Crowdsale {
   modifier afterCrowdsale() {
     if (now > endTime) _;
   }
+
+  event GoalReached(address _beneficiary, uint _amountRaised);
+  event FundTransfer(address _backer, uint _amount, bool _isContribution);
+  event ReceivedApproval(uint256 _value);
 }
