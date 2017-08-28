@@ -1,4 +1,4 @@
-pragma solidity ^0.4.8;
+pragma solidity ^0.4.11;
 
 
 import './Token.sol';
@@ -27,15 +27,15 @@ contract Crowdsale {
   // @param _fundingGoal Target goal of the crowdfunding in Ethereum
   // @param _price Price of each token in Ethereun
   // @param _startTime Crowdsale starting time
-  // @param _duration Crowdsale duration in minutes
+  // @param _endTime Crowdsale ending time
   // @param _tokenReward Address of the token used as reward
   //
-  function Crowdsale(address _beneficiary, uint _fundingGoal, uint _price, uint _startTime, uint _duration, Token _tokenReward) {
+  function Crowdsale(address _beneficiary, uint _fundingGoal, uint _price, uint _startTime, uint _endTime, Token _tokenReward) {
     beneficiary = _beneficiary;
     fundingGoal = _fundingGoal * 1 ether;
     price = _price * 1 ether;
     startTime = _startTime;
-    endTime = _startTime + _duration * 1 minutes;
+    endTime = _endTime;
     tokenReward = Token(_tokenReward);
   }
 

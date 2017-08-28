@@ -1,4 +1,4 @@
-pragma solidity ^0.4.8;
+pragma solidity ^0.4.11;
 
 // Owned contract, some functionality is accessible exclusively by the contract
 // owner. Provides basic access functionality.
