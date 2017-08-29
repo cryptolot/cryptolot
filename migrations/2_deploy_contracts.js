@@ -37,6 +37,6 @@ module.exports = function(deployer) {
       _crowdsaleStartTime,
       _crowdsaleEndTime,
       Token.address
-    ).then(() => {console.log(Crowdsale)});
+    );
   });
 };

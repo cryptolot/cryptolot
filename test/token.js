@@ -10,18 +10,18 @@ contract('Token', function(accounts) {
 
 
   it('[Creation] Should create an initial balance of 10000 for the creator', function() {
-    Token.new(10000, 'Token', 'TKN', 1, { from: accounts[0] }).then(function(instance) {
-      return instance.balanceOf.call(accounts[0]);
+    return Token.new(10000, 'Token', 'TKN', 1, { from: accounts[0] }).then(function(instance) {
+      return instance.balances.call(accounts[0]);
     }).then(function(result) {
       assert.strictEqual(result.toNumber(), 10000);
     }).catch((err) => { throw new Error(err); });
   });
 
 
-  it('[Creation] test correct setting of vanity information', function() {
+  it.only('[Creation] test correct setting of vanity information', function() {
     var instance;
     return Token.new(10000, 'Token', 'TKN', 1, { from: accounts[0] }).then(function(result) {
-      instance = result
+      instance = result;
       return instance.name.call();
     }).then(function(name) {
       assert.strictEqual(name, 'Token');
@@ -68,10 +68,10 @@ contract('Token', function(accounts) {
       instance = result;
       return instance.transfer(accounts[1], 10000, { from: accounts[0] });
     }).then(function(result) {
-      return instance.balanceOf.call(accounts[1]);
+      return instance.balances.call(accounts[1]);
     }).then(function(result) {
       assert.strictEqual(result.toNumber(), 10000);
-      return instance.balanceOf.call(accounts[0]);
+      return instance.balances.call(accounts[0]);
     }).then(function(result) {
       assert.strictEqual(result.toNumber(), 0);
     }).catch((err) => { throw new Error(err); });
@@ -120,12 +120,12 @@ contract('Token', function(accounts) {
     var instance;
     return Token.new(10000, 'Token', 'TKN', 1, { from: accounts[0] }).then(function(result) {
       instance = result;
-      return instance.balanceOf.call(accounts[0]);
+      return instance.balances.call(accounts[0]);
     }).then(function(result) {
       assert.strictEqual(result.toNumber(), 10000);
       return instance.approve(accounts[1], 100, { from: accounts[0] });
     }).then(function(result) {
-      return instance.balanceOf.call(accounts[2]);
+      return instance.balances.call(accounts[2]);
     }).then(function(result) {
       assert.strictEqual(result.toNumber(), 0);
       return instance.allowance.call(accounts[0], accounts[1]);
@@ -138,10 +138,10 @@ contract('Token', function(accounts) {
       return instance.allowance.call(accounts[0], accounts[1]);
     }).then(function(result) {
       assert.strictEqual(result.toNumber(), 80);
-      return instance.balanceOf.call(accounts[2]);
+      return instance.balances.call(accounts[2]);
     }).then(function(result) {
       assert.strictEqual(result.toNumber(), 20);
-      return instance.balanceOf.call(accounts[0]);
+      return instance.balances.call(accounts[0]);
     }).then(function(result) {
       assert.strictEqual(result.toNumber(), 9980)
     }).catch((err) => { throw new Error(err); });
@@ -162,10 +162,10 @@ contract('Token', function(accounts) {
       return instance.allowance.call(accounts[0], accounts[1]);
     }).then(function(result) {
       assert.strictEqual(result.toNumber(), 80);
-      return instance.balanceOf.call(accounts[2]);
+      return instance.balances.call(accounts[2]);
     }).then(function(result) {
       assert.strictEqual(result.toNumber(), 20);
-      return instance.balanceOf.call(accounts[0]);
+      return instance.balances.call(accounts[0]);
     }).then(function(result) {
       assert.strictEqual(result.toNumber(), 9980);
       return instance.transferFrom(accounts[0], accounts[2], 20, {from: accounts[1]});
@@ -173,10 +173,10 @@ contract('Token', function(accounts) {
       return instance.allowance.call(accounts[0], accounts[1])
     }).then(function(result) {
       assert.strictEqual(result.toNumber(), 60)
-      return instance.balanceOf.call(accounts[2])
+      return instance.balances.call(accounts[2])
     }).then(function(result) {
       assert.strictEqual(result.toNumber(), 40)
-      return instance.balanceOf.call(accounts[0])
+      return instance.balances.call(accounts[0])
     }).then(function(result) {
       assert.strictEqual(result.toNumber(), 9960)
     }).catch((err) => { throw new Error(err); });
@@ -197,10 +197,10 @@ contract('Token', function(accounts) {
       return instance.allowance.call(accounts[0], accounts[1])
     }).then(function(result) {
       assert.strictEqual(result.toNumber(), 50)
-      return instance.balanceOf.call(accounts[2])
+      return instance.balances.call(accounts[2])
     }).then(function(result) {
       assert.strictEqual(result.toNumber(), 50)
-      return instance.balanceOf.call(accounts[0])
+      return instance.balances.call(accounts[0])
     }).then(function(result) {
       assert.strictEqual(result.toNumber(), 9950)
       return instance.transferFrom.call(accounts[0], accounts[2], 60, { from: accounts[1] });
@@ -263,8 +263,7 @@ contract('Token', function(accounts) {
 
   it('[Events] should fire Transfer event properly', function() {
     var instance = null;
-    return Token.new(10000, 'Token', 'TKN', 1, { from: accounts[0] });
-    .then(function(result) {
+    return Token.new(10000, 'Token', 'TKN', 1, { from: accounts[0] }).then(function(result) {
       instance = result;
       return instance.transfer(accounts[1], '2666', { from: accounts[0] });
     }).then(function(result) {
@@ -284,8 +283,7 @@ contract('Token', function(accounts) {
 
   it('[Events] should fire Transfer event normally on a zero transfer', function() {
     var instance = null;
-    return Token.new(10000, 'Token', 'TKN', 1, { from: accounts[0] });
-    .then(function(result) {
+    return Token.new(10000, 'Token', 'TKN', 1, { from: accounts[0] }).then(function(result) {
       instance = result;
       return instance.transfer(accounts[1], '0', { from: accounts[0] });
     }).then(function(result) {
@@ -305,8 +303,7 @@ contract('Token', function(accounts) {
 
   it('[Events] should fire Approval event properly', function() {
     var instance = null;
-    return Token.new(10000, 'Token', 'TKN', 1, { from: accounts[0] });
-    .then(function(result) {
+    return Token.new(10000, 'Token', 'TKN', 1, { from: accounts[0] }).then(function(result) {
       instance = result;
       return instance.approve(accounts[1], '2666', { from: accounts[0] });
     }).then(function(result) {
