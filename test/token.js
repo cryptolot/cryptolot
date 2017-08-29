@@ -1,5 +1,12 @@
 var Token = artifacts.require('./Token.sol')
 
+
+var _tokenInitialAmount = 10000;
+var _tokenName = 'Token';
+var _tokenSymbol = 'TKN';
+var _tokenDecimalUnits = 1;
+
+
 contract('Token', function(accounts) {
   const evmThrewError = (err) => {
     if (err.toString().includes('VM Exception while executing eth_call: invalid opcode')) {
@@ -10,34 +17,34 @@ contract('Token', function(accounts) {
 
 
   it('[Creation] Should create an initial balance of 10000 for the creator', function() {
-    return Token.new(10000, 'Token', 'TKN', 1, { from: accounts[0] }).then(function(instance) {
+    return Token.new(_tokenInitialAmount, _tokenName, _tokenSymbol, _tokenDecimalUnits, { from: accounts[0] }).then(function(instance) {
       return instance.balances.call(accounts[0]);
     }).then(function(result) {
-      assert.strictEqual(result.toNumber(), 10000);
+      assert.strictEqual(result.toNumber(), _tokenInitialAmount);
     }).catch((err) => { throw new Error(err); });
   });
 
 
-  it.only('[Creation] test correct setting of vanity information', function() {
+  it('[Creation] test correct setting of vanity information', function() {
     var instance;
-    return Token.new(10000, 'Token', 'TKN', 1, { from: accounts[0] }).then(function(result) {
+    return Token.new(_tokenInitialAmount, _tokenName, _tokenSymbol, _tokenDecimalUnits, { from: accounts[0] }).then(function(result) {
       instance = result;
       return instance.name.call();
     }).then(function(name) {
-      assert.strictEqual(name, 'Token');
+      assert.strictEqual(name, _tokenName);
       return instance.symbol.call();
     }).then(function(symbol) {
-      assert.strictEqual(symbol, 'TKN');
+      assert.strictEqual(symbol, _tokenSymbol);
       return instance.decimals.call();
     }).then(function(decimals) {
-      assert.strictEqual(decimals.toNumber(), 3);
+      assert.strictEqual(decimals.toNumber(), _tokenDecimalUnits);
     }).catch((err) => { throw new Error(err); });
   });
 
 
   it('[Creation] Should succeed in creating over 2^256 - 1 (max) tokens', function() {
     // 2^256 - 1
-    return Token.new('115792089237316195423570985008687907853269984665640564039457584007913129639935', 'Token', 'TKN', 1, { from: accounts[0] }).then(function(instance) {
+    return Token.new('115792089237316195423570985008687907853269984665640564039457584007913129639935', _tokenName, _tokenSymbol, _tokenDecimalUnits, { from: accounts[0] }).then(function(instance) {
       return instance.totalSupply();
     }).then(function(supply) {
       var match = supply.equals('1.15792089237316195423570985008687907853269984665640564039457584007913129639935e+77');
@@ -53,7 +60,7 @@ contract('Token', function(accounts) {
   //
   it('[Transfer] ether transfer should be reversed.', function() {
     var instance;
-    return Token.new(10000, 'Token', 'TKN', 1, { from: accounts[0] }).then(function(result) {
+    return Token.new(_tokenInitialAmount, _tokenName, _tokenSymbol, _tokenDecimalUnits, { from: accounts[0] }).then(function(result) {
       instance = result;
       return web3.eth.sendTransaction({from: accounts[0], to: instance.address, value: web3.toWei('10', 'Ether')});
     }).catch(function(result) {
@@ -64,7 +71,7 @@ contract('Token', function(accounts) {
 
   it('[Transfer] should transfer 10000 to accounts[1] with accounts[0] having 10000', function() {
     var instance;
-    return Token.new(10000, 'Token', 'TKN', 1, { from: accounts[0] }).then(function(result) {
+    return Token.new(_tokenInitialAmount, _tokenName, _tokenSymbol, _tokenDecimalUnits, { from: accounts[0] }).then(function(result) {
       instance = result;
       return instance.transfer(accounts[1], 10000, { from: accounts[0] });
     }).then(function(result) {
@@ -80,7 +87,7 @@ contract('Token', function(accounts) {
 
   it('[Transfer] should fail when trying to transfer 10001 to accounts[1] with accounts[0] having 10000', function() {
     var instance
-    return Token.new(10000, 'Token', 'TKN', 1, { from: accounts[0] }).then(function(result) {
+    return Token.new(_tokenInitialAmount, _tokenName, _tokenSymbol, _tokenDecimalUnits, { from: accounts[0] }).then(function(result) {
       instance = result;
       return instance.transfer.call(accounts[1], 10001, { from: accounts[0] });
     }).then(function(result) {
@@ -92,20 +99,23 @@ contract('Token', function(accounts) {
   });
 
 
-  it('[Transfer] should handle zero-transfers normally', function() {
+  it('[Transfer] should handle zero-transfers with an error', function() {
     var instance;
-    return Token.new(10000, 'Token', 'TKN', 1, { from: accounts[0] }).then(function(result) {
+    return Token.deployed().then(function(result) {
       instance = result;
       return instance.transfer.call(accounts[1], 0, { from: accounts[0] });
     }).then(function(result) {
       assert.isTrue(result);
-    }).catch((err) => { throw new Error(err); });
+    }).catch((err) => {
+      assert(evmThrewError(err), 'the EVM did not throw an error or did not ' +
+                                 'throw the expected error');
+    });
   });
 
 
   it('[Approval] msg.sender should approve 100 to accounts[1]', function() {
     var instance;
-    return Token.new(10000, 'Token', 'TKN', 1, { from: accounts[0] }).then(function(result) {
+    return Token.new(_tokenInitialAmount, _tokenName, _tokenSymbol, _tokenDecimalUnits, { from: accounts[0] }).then(function(result) {
       instance = result;
       return instance.approve(accounts[1], 100, { from: accounts[0] });
     }).then(function(result) {
@@ -118,7 +128,7 @@ contract('Token', function(accounts) {
 
   it('[Approval] msg.sender approves accounts[1] of 100 & withdraws 20 once.', function() {
     var instance;
-    return Token.new(10000, 'Token', 'TKN', 1, { from: accounts[0] }).then(function(result) {
+    return Token.new(_tokenInitialAmount, _tokenName, _tokenSymbol, _tokenDecimalUnits, { from: accounts[0] }).then(function(result) {
       instance = result;
       return instance.balances.call(accounts[0]);
     }).then(function(result) {
@@ -150,7 +160,7 @@ contract('Token', function(accounts) {
 
   it('[Approval] msg.sender approves accounts[1] of 100 & withdraws 20 twice.', function() {
     var instance;
-    return Token.new(10000, 'Token', 'TKN', 1, { from: accounts[0] }).then(function(result) {
+    return Token.new(_tokenInitialAmount, _tokenName, _tokenSymbol, _tokenDecimalUnits, { from: accounts[0] }).then(function(result) {
       instance = result;
       return instance.approve(accounts[1], 100, { from: accounts[0] });
     }).then(function(result) {
@@ -185,7 +195,7 @@ contract('Token', function(accounts) {
 
   it('[Approval] msg.sender approves accounts[1] of 100 & withdraws 50 & 60 (2nd tx should fail)', function() {
     var instance = null
-    return Token.new(10000, 'Token', 'TKN', 1, { from: accounts[0] }).then(function(result) {
+    return Token.new(_tokenInitialAmount, _tokenName, _tokenSymbol, _tokenDecimalUnits, { from: accounts[0] }).then(function(result) {
       instance = result
       return instance.approve(accounts[1], 100, { from: accounts[0] });
     }).then(function(result) {
@@ -215,7 +225,7 @@ contract('Token', function(accounts) {
 
   it('[Approval] attempt withdrawal from acconut with no allowance (should fail)', function() {
     var instance = null
-    return Token.new(10000, 'Token', 'TKN', 1, { from: accounts[0] }).then(function(result) {
+    return Token.new(_tokenInitialAmount, _tokenName, _tokenSymbol, _tokenDecimalUnits, { from: accounts[0] }).then(function(result) {
       instance = result
       return instance.transferFrom.call(accounts[0], accounts[2], 60, { from: accounts[1] });
     }).then(function(result) {
@@ -229,7 +239,7 @@ contract('Token', function(accounts) {
 
   it('[Approval] allow accounts[1] 100 to withdraw from accounts[0]. Withdraw 60 and then approve 0 & attempt transfer.', function() {
     var instance = null
-    return Token.new(10000, 'Token', 'TKN', 1, { from: accounts[0] }).then(function(result) {
+    return Token.new(_tokenInitialAmount, _tokenName, _tokenSymbol, _tokenDecimalUnits, { from: accounts[0] }).then(function(result) {
       instance = result
       return instance.approve(accounts[1], 100, { from: accounts[0] });
     }).then(function(result) {
@@ -249,7 +259,7 @@ contract('Token', function(accounts) {
 
   it('[Approval] approve max (2^256 - 1)', function() {
     var instance = null;
-    return Token.new(10000, 'Token', 'TKN', 1, { from: accounts[0] }).then(function(result) {
+    return Token.new(_tokenInitialAmount, _tokenName, _tokenSymbol, _tokenDecimalUnits, { from: accounts[0] }).then(function(result) {
       instance = result;
       return instance.approve(accounts[1], '115792089237316195423570985008687907853269984665640564039457584007913129639935', { from: accounts[0] });
     }).then(function(result) {
@@ -263,7 +273,7 @@ contract('Token', function(accounts) {
 
   it('[Events] should fire Transfer event properly', function() {
     var instance = null;
-    return Token.new(10000, 'Token', 'TKN', 1, { from: accounts[0] }).then(function(result) {
+    return Token.new(_tokenInitialAmount, _tokenName, _tokenSymbol, _tokenDecimalUnits, { from: accounts[0] }).then(function(result) {
       instance = result;
       return instance.transfer(accounts[1], '2666', { from: accounts[0] });
     }).then(function(result) {
@@ -281,29 +291,9 @@ contract('Token', function(accounts) {
   });
 
 
-  it('[Events] should fire Transfer event normally on a zero transfer', function() {
-    var instance = null;
-    return Token.new(10000, 'Token', 'TKN', 1, { from: accounts[0] }).then(function(result) {
-      instance = result;
-      return instance.transfer(accounts[1], '0', { from: accounts[0] });
-    }).then(function(result) {
-      var transferLog = result.logs.find((element) => {
-        if (element.event.match('Transfer')) {
-          return true;
-        } else {
-          return false;
-        }
-      });
-      assert.strictEqual(transferLog.args._from, accounts[0]);
-      assert.strictEqual(transferLog.args._to, accounts[1]);
-      assert.strictEqual(transferLog.args._value.toString(), '0');
-    }).catch((err) => { throw new Error(err); });
-  });
-
-
   it('[Events] should fire Approval event properly', function() {
     var instance = null;
-    return Token.new(10000, 'Token', 'TKN', 1, { from: accounts[0] }).then(function(result) {
+    return Token.new(_tokenInitialAmount, _tokenName, _tokenSymbol, _tokenDecimalUnits, { from: accounts[0] }).then(function(result) {
       instance = result;
       return instance.approve(accounts[1], '2666', { from: accounts[0] });
     }).then(function(result) {
