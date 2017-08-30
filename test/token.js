@@ -18,7 +18,7 @@ contract('Token', function(accounts) {
   });
 
 
-  it.only('[Creation] test correct setting of vanity information', function() {
+  it('[Creation] test correct setting of vanity information', function() {
     var instance;
     return Token.new(10000, 'Token', 'TKN', 1, { from: accounts[0] }).then(function(result) {
       instance = result;
@@ -30,7 +30,7 @@ contract('Token', function(accounts) {
       assert.strictEqual(symbol, 'TKN');
       return instance.decimals.call();
     }).then(function(decimals) {
-      assert.strictEqual(decimals.toNumber(), 3);
+      assert.strictEqual(decimals.toNumber(), 1);
     }).catch((err) => { throw new Error(err); });
   });
 
