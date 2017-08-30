@@ -8,10 +8,16 @@
 pragma solidity ^0.4.11;
 
 
+import "../lib/SafeMathLib.sol";
 import "./Owned.sol";
 
 
-contract Token is Owned {
+contract StandardToken is Owned {
+
+
+  using SafeMathLib for uint;
+
+
   // Token version
   //
   string public version = '1.0.0';
@@ -35,11 +41,6 @@ contract Token is Owned {
   uint8 public decimals;                // How many decimals to show
 
 
-  // Determine whether the token can be minted or not
-  //
-  bool public mintingFinished = false;
-
-
   // Token constructor
   //
   function Token(uint256 _initialAmount, string _tokenName, string _tokenSymbol, uint8 _decimalUnits) {
@@ -48,6 +49,13 @@ contract Token is Owned {
     name = _tokenName;                      // Set the name for display purposes
     symbol = _tokenSymbol;                  // Set the symbol for display purposes
     decimals = _decimalUnits;               // Amount of decimals for display purposes
+  }
+
+
+  // Interface declaration
+  //
+  function isToken() public constant returns (bool _is) {
+    return true;
   }
 
 
@@ -70,10 +78,10 @@ contract Token is Owned {
   // @return Whether the transfer was successful or not
   //
   function transfer(address _to, uint256 _value) returns (bool success) {
-    require(balances[msg.sender] >= _value && balances[_to] + _value > balances[_to]);
+    require(balances[msg.sender] >= _value && balances[_to].plus(_value) > balances[_to]);
 
-    balances[msg.sender] -= _value;
-    balances[_to] += _value;
+    balances[msg.sender] = balances[msg.sender].minus(_value);
+    balances[_to] = balances[_to].plus(_value);
 
     Transfer(msg.sender, _to, _value);
     return true;
@@ -95,11 +103,11 @@ contract Token is Owned {
   function transferFrom(address _from, address _to, uint256 _value) returns (bool success) {
     require(balances[_from] >= _value
       && allowed[_from][msg.sender] >= _value
-      && balances[_to] + _value > balances[_to]);
+      && balances[_to].plus(_value) > balances[_to]);
 
-    balances[_to] += _value;
-    balances[_from] -= _value;
-    allowed[_from][msg.sender] -= _value;
+    balances[_to] = balances[_to].plus(_value);
+    balances[_from] = balances[_from].minus(_value);
+    allowed[_from][msg.sender] = allowed[_from][msg.sender].minus(_value);
 
     Transfer(_from, _to, _value);
     return true;
@@ -157,74 +165,8 @@ contract Token is Owned {
   }
 
 
-  // Returns the amount which _spender is still allowed to withdraw from _owner
-  //
-  // @param _to The address of the account to reveive the tokens
-  // @param _amount The amount of tokens to be minted
-  // @return Amount of remaining tokens allowed to spent
-  //
-  function mint(address _to, uint256 _amount) onlyOwner canMint returns (bool _minted) {
-    totalSupply += _amount;
-    balances[_to] += _amount;
-    Mint(_to, _amount);
-    Transfer(0x0, _to, _amount);
-    return true;
-  }
-
-
-  // Stop minting new tokens.
-  // @return True if the operation was successful.
-  //
-  function finishMinting() onlyOwner returns (bool _finished) {
-    mintingFinished = true;
-    MintFinished();
-    return true;
-  }
-
-
-  // Determine whether new tokens can be minted
-  //
-  modifier canMint() {
-    require(!mintingFinished);
-    _;
-  }
-
-
-  // Remove _value tokens from the system, irreversibly
-  //
-  // @param _value the amount of money to burn
-  //
-  function burn(uint256 _value) returns (bool success) {
-    require (balances[msg.sender] > _value);   // Check if the sender has enough
-    balances[msg.sender] -= _value;            // Subtract from the sender
-    totalSupply -= _value;                      // Updates totalSupply
-    Burn(msg.sender, _value);
-    return true;
-  }
-
-
-  // Remove _value tokens from the _from address, irreversibly
-  //
-  // @param _from The address of the account owning tokens
-  // @param _value the amount of money to burn
-  //
-  function burnFrom(address _from, uint256 _value) returns (bool success) {
-    require(balances[_from] >= _value);                 // Check if the targeted balance is enough
-    require(_value <= allowed[_from][msg.sender]);      // Check allowance
-    balances[_from] -= _value;                          // Subtract from the targeted balance
-    allowed[_from][msg.sender] -= _value;               // Subtract from the sender's allowance
-    totalSupply -= _value;                              // Update totalSupply
-    Burn(_from, _value);
-    return true;
-  }
-
-
   // Transfer and approval events
   //
   event Transfer(address indexed _from, address indexed _to, uint256 _value);
   event Approval(address indexed _owner, address indexed _spender, uint256 _value);
-  event ReceivedApproval(uint256 _value);
-  event Burn(address indexed _burner, uint indexed _value);
-  event Mint(address indexed _to, uint256 _amount);
-  event MintFinished();
 }
