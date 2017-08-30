@@ -43,7 +43,7 @@ contract StandardToken is Owned {
 
   // Token constructor
   //
-  function Token(uint256 _initialAmount, string _tokenName, string _tokenSymbol, uint8 _decimalUnits) {
+  function StandardToken(uint256 _initialAmount, string _tokenName, string _tokenSymbol, uint8 _decimalUnits) {
     balances[msg.sender] = _initialAmount;  // Give the creator all initial tokens
     totalSupply = _initialAmount;           // Update total supply
     name = _tokenName;                      // Set the name for display purposes
