@@ -1,38 +1,60 @@
 pragma solidity ^0.4.11;
 
 
-// Safe unsigned safe math.
+// Math operations with safety checks that throw on error
 //
 // https://blog.aragon.one/library-driven-development-in-solidity-2bebcaf88736#.750gwtwli
 //
-// Originally from https://raw.githubusercontent.com/AragonOne/zeppelin-solidity/master/contracts/SafeMathLib.sol
+// Originally from https://raw.githubusercontent.com/AragonOne/zeppelin-solidity/master/contracts/SafeMath.sol
 // Maintained here until merged to mainline zeppelin-solidity.
 //
+// @usage using SafeMathLib for uint256;
+//
 library SafeMathLib {
-  function times(uint a, uint b) returns (uint) {
-    uint c = a * b;
+  // Safely multiplies two large numbers a and b
+  //
+  // @usage a.times(b);
+  // @returns a * b
+  //
+  function times(uint256 a, uint256 b) internal constant returns (uint256) {
+    uint256 c = a * b;
     assert(a == 0 || c / a == b);
     return c;
   }
 
 
-  function minus(uint a, uint b) returns (uint) {
+  // Safely divides two large numbers a and b
+  //
+  // @usage a.div(b);
+  // @returns a / b
+  //
+  function div(uint256 a, uint256 b) internal constant returns (uint256) {
+    // assert(b > 0); // Solidity automatically throws when dividing by 0
+    uint256 c = a / b;
+    // assert(a == b * c + a % b); // There is no case in which this doesn't hold
+    return c;
+  }
+
+
+  // Safely adds two large numbers a and b
+  //
+  // @usage a.plus(b);
+  // @returns a + b
+  //
+  function plus(uint256 a, uint256 b) internal constant returns (uint256) {
+    uint256 c = a + b;
+    assert(c >= a);
+    return c;
+  }
+
+
+  // Safely subtracts two large numbers b from a
+  //
+  // @usage a.minus(b);
+  // @returns a - b
+  //
+  function minus(uint256 a, uint256 b) internal constant returns (uint256) {
     assert(b <= a);
     return a - b;
-  }
-
-
-  function plus(uint a, uint b) returns (uint) {
-    uint c = a + b;
-    assert(c>=a);
-    return c;
-  }
-
-
-  function div(uint a, uint b) internal returns (uint) {
-    assert(b > 0);
-    uint c = a / b;
-    assert(a == b * c + a % b);
-    return c;
   }
 }
