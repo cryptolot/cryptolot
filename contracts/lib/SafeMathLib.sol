@@ -14,7 +14,7 @@ library SafeMathLib {
   // Safely multiplies two large numbers a and b
   //
   // @usage a.times(b);
-  // @returns a * b
+  // @return a * b
   //
   function times(uint256 a, uint256 b) internal constant returns (uint256) {
     uint256 c = a * b;
@@ -26,7 +26,7 @@ library SafeMathLib {
   // Safely divides two large numbers a and b
   //
   // @usage a.div(b);
-  // @returns a / b
+  // @return a / b
   //
   function div(uint256 a, uint256 b) internal constant returns (uint256) {
     // assert(b > 0); // Solidity automatically throws when dividing by 0
@@ -39,7 +39,7 @@ library SafeMathLib {
   // Safely adds two large numbers a and b
   //
   // @usage a.plus(b);
-  // @returns a + b
+  // @return a + b
   //
   function plus(uint256 a, uint256 b) internal constant returns (uint256) {
     uint256 c = a + b;
@@ -51,7 +51,7 @@ library SafeMathLib {
   // Safely subtracts two large numbers b from a
   //
   // @usage a.minus(b);
-  // @returns a - b
+  // @return a - b
   //
   function minus(uint256 a, uint256 b) internal constant returns (uint256) {
     assert(b <= a);
