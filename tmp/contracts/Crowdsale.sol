@@ -2,7 +2,7 @@ pragma solidity ^0.4.11;
 
 
 import './lib/SafeMathLib.sol';
-import './token/Owned.sol';
+import './ownership/Owned.sol';
 import './LotteryToken.sol';
 
 
