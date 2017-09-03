@@ -1,45 +1,10 @@
-/**
- * Dependencies
- */
-const path = require('path');
-const config = {
-  token: require(path.join(__dirname, '..', '..', 'config', 'LotteryToken'))
-}
-
-
-/**
- * Contracts and libraries
- */
-var SafeMathLib = artifacts.require("./lib/SafeMathLib.sol");
-var TokenStorage = artifacts.require("./storage/TokenStorage.sol");
-
-
-/**
- * Helper functions for creating elements
- */
-var accounts;
-var create = {
-  TokenStorage: (options) => {
-    var instance;
-
-    options = options || config.token;
-
-    return TokenStorage.new(options.totalSupply)
-      .then((_instance) => {
-        instance = _instance;
-
-        return instance.setModule(accounts[0], true, { from: accounts[0] });
-      }).then((hasSetModule) => {
-        assert.notEqual(hasSetModule, null);
-
-        return instance;
-      });
-  }
-}
-
-
-contract('TokenStorage', function(_accounts) {
-  accounts = _accounts;
+contract('TokenStorage', function(accounts) {
+  /**
+   * Dependencies
+   */
+  const path = require('path');
+  const config = require(path.join(__dirname, '..', 'helpers', 'config'));
+  const create = require(path.join(__dirname, '..', 'helpers', 'create'))(accounts);
 
 
   /**
