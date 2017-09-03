@@ -68,7 +68,7 @@ contract TokenStorage is Owned {
    * @param  _value The value by which the balance increases
    *
    */
-  function increase(address _owner, uint256 _value) onlyModule returns (bool _success){
+  function increase(address _owner, uint256 _value) onlyModule returns (bool _success) {
     balances[_owner] = balances[_owner].plus(_value);
     BalanceAdjustment(msg.sender, _owner, _value, "+");
     return true;
@@ -82,7 +82,7 @@ contract TokenStorage is Owned {
    * @param  _value The value by which the balance decreases
    *
    */
-  function decrease(address _owner, uint256 _value) onlyModule returns (bool _success){
+  function decrease(address _owner, uint256 _value) onlyModule returns (bool _success) {
     balances[_owner] = balances[_owner].minus(_value);
     BalanceAdjustment(msg.sender, _owner, _value, "-");
     return true;
@@ -92,7 +92,7 @@ contract TokenStorage is Owned {
   /**
    * Get the total supply of tokens.
    */
-  function getTotalSupply() returns (uint256){
+  function getTotalSupply() constant returns (uint256) {
     return totalSupply;
   }
 
@@ -102,7 +102,7 @@ contract TokenStorage is Owned {
    *
    * @param _value Amount of tokens added to the total supply
    */
-  function increaseTotalSupply(uint256 _value) onlyOwner returns (bool _success){
+  function increaseTotalSupply(uint256 _value) onlyModule returns (bool _success) {
     totalSupply = totalSupply.plus(_value);
     return true;
   }
@@ -113,7 +113,7 @@ contract TokenStorage is Owned {
    *
    * @param _value Amount of tokens removed from the total supply
    */
-  function decreaseTotalSupply(uint256 _value) onlyOwner returns (bool _success){
+  function decreaseTotalSupply(uint256 _value) onlyModule returns (bool _success) {
     totalSupply = totalSupply.minus(_value);
     return true;
   }
@@ -126,7 +126,7 @@ contract TokenStorage is Owned {
    * @param _spender The address of the account able to transfer the tokens
    * @return Amount of remaining tokens allowed to spent
    */
-  function getAllowance(address _owner, address _spender) returns (uint256 _remaining){
+  function getAllowance(address _owner, address _spender) constant returns (uint256 _remaining) {
     return allowed[_owner][_spender];
   }
 
@@ -150,7 +150,7 @@ contract TokenStorage is Owned {
    * @param _owner The address of the account owning tokens
    * @param _spender The address of the account able to transfer the tokens
    */
-  function decreaseAllowance(address _owner, address _spender, uint _value) onlyModule returns (bool _success){
+  function decreaseAllowance(address _owner, address _spender, uint _value) onlyModule returns (bool _success) {
     allowed[_owner][_spender] = allowed[_owner][_spender].minus(_value);
     return true;
   }
@@ -163,7 +163,7 @@ contract TokenStorage is Owned {
    * @param _owner The address of the account owning tokens
    * @param _spender The address of the account able to transfer the tokens
    */
-  function increaseAllowance(address _owner, address _spender, uint _value) onlyModule returns (bool _success){
+  function increaseAllowance(address _owner, address _spender, uint _value) onlyModule returns (bool _success) {
     allowed[_owner][_spender] = allowed[_owner][_spender].plus(_value);
     return true;
   }
@@ -176,7 +176,7 @@ contract TokenStorage is Owned {
    * @param _module The address of the module to be activated
    * @param _active The activation status of the module
    */
-  function setModule(address _module, bool _active) onlyOwner returns (bool _success){
+  function setModule(address _module, bool _active) onlyOwner returns (bool _success) {
     modules[_module] = _active;
     ModuleSet(_module, _active);
     return true;
@@ -188,7 +188,7 @@ contract TokenStorage is Owned {
    *
    * @param _module The address of the module
    */
-  function getModule(address _module) constant returns (bool _success){
+  function getModule(address _module) constant returns (bool _success) {
     return modules[_module];
   }
 

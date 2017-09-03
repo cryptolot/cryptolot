@@ -1,7 +1,7 @@
 pragma solidity ^0.4.11;
 
 
-import "./Token.sol";
+import "./LotteryToken.sol";
 
 
 // Cryptolot lottery decentralized application
