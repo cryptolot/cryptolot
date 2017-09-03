@@ -10,7 +10,7 @@ const path = require('path');
 var SafeMathLib = artifacts.require("./lib/SafeMathLib.sol");
 var TokenStorage = artifacts.require("./storage/TokenStorage.sol");
 var Token = artifacts.require("./StandardToken.sol");
-var Crowdsale = artifacts.require("./Crowdsale.sol");
+// var Crowdsale = artifacts.require("./Crowdsale.sol");
 
 
 /**
@@ -24,7 +24,7 @@ var config = {
 module.exports = function(deployer) {
   // Deploy and link safe math library
   deployer.deploy(SafeMathLib);
-  deployer.link(SafeMathLib, [ TokenStorage, Token, Crowdsale ]);
+  deployer.link(SafeMathLib, [ TokenStorage, Token ]);
 
 
   // Deploy token storage and initialize total supply of tokens.
