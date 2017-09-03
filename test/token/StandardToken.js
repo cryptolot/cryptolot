@@ -1,4 +1,4 @@
-var Token = artifacts.require('./Token.sol')
+var Token = artifacts.require('./token/StandardToken.sol')
 
 
 var _tokenInitialAmount = 10000;
@@ -8,5 +8,5 @@ var _tokenDecimalUnits = 1;
 
 
 contract('Token', function(accounts) {
-  
+
 });
