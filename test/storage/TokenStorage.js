@@ -47,7 +47,7 @@ contract('TokenStorage', function(_accounts) {
    */
 
 
-  it.only('Should create a new token storage with ' + config.token.totalSupply + ' tokens for the creator.', () => {
+  it('Should create a new token storage with ' + config.token.totalSupply + ' tokens for the creator.', () => {
     var instance;
 
     return create.TokenStorage()
@@ -72,7 +72,37 @@ contract('TokenStorage', function(_accounts) {
    */
 
 
-  it.only('Should set and verify that an address is a module.', () => {
+  it('Should check if an address is a module.', () => {
+    var instance;
+
+    return create.TokenStorage()
+      .then((_instance) => {
+        instance = _instance;
+
+        return instance.getModule.call(accounts[0]);
+      })
+      .then((isModule) => {
+        assert.equal(isModule, true);
+      });
+  });
+
+
+  it('Should check if an address is not a module.', () => {
+    var instance;
+
+    return create.TokenStorage()
+      .then((_instance) => {
+        instance = _instance;
+
+        return instance.getModule.call(accounts[1]);
+      })
+      .then((isModule) => {
+        assert.equal(isModule, false);
+      });
+  });
+
+
+  it('Should set an address as a module.', () => {
     var instance;
 
     return create.TokenStorage()
@@ -92,27 +122,12 @@ contract('TokenStorage', function(_accounts) {
   });
 
 
-  it.only('Should verify that an address is not a module.', () => {
-    var instance;
-
-    return create.TokenStorage()
-      .then((_instance) => {
-        instance = _instance;
-
-        return instance.getModule.call(accounts[1]);
-      })
-      .then((isModule) => {
-        assert.equal(isModule, false);
-      });
-  });
-
-
   /**
    * Balance
    */
 
 
-  it.only('Should get the balance of token holders.', () => {
+  it('Should get the balance of token holders.', () => {
     var instance;
 
     return create.TokenStorage()
@@ -132,7 +147,7 @@ contract('TokenStorage', function(_accounts) {
   });
 
 
-  it.only('Should increase the balance of a token holder.', () => {
+  it('Should increase the balance of a token holder.', () => {
     var instance;
     var initialBalance;
     var balanceIncrease = 100;
@@ -160,7 +175,7 @@ contract('TokenStorage', function(_accounts) {
   });
 
 
-  it.only('Should decrease the balance of a token holder.', () => {
+  it('Should decrease the balance of a token holder.', () => {
     var instance;
     var initialBalance;
     var balanceDecrease = 100;
@@ -193,7 +208,7 @@ contract('TokenStorage', function(_accounts) {
    */
 
 
-  it.only('Should get the total supply of tokens.', () => {
+  it('Should get the total supply of tokens.', () => {
     var instance;
 
     return create.TokenStorage()
@@ -208,7 +223,7 @@ contract('TokenStorage', function(_accounts) {
   });
 
 
-  it.only('Should increase the total supply of tokens.', () => {
+  it('Should increase the total supply of tokens.', () => {
     var instance;
     var supplyIncrease = 1000;
 
@@ -229,7 +244,7 @@ contract('TokenStorage', function(_accounts) {
   });
 
 
-  it.only('Should decrease the total supply of tokens.', () => {
+  it('Should decrease the total supply of tokens.', () => {
     var instance;
     var supplyDecrease = 1000;
 
@@ -255,7 +270,7 @@ contract('TokenStorage', function(_accounts) {
    */
 
 
-  it.only('Should get the allowance of a token owner from another.', () => {
+  it('Should get the allowance of spender from a token owner.', () => {
     var instance;
 
     return create.TokenStorage()
@@ -270,7 +285,7 @@ contract('TokenStorage', function(_accounts) {
   });
 
 
-  it.only('Should set the allowance of a token owner from another.', () => {
+  it('Should set the allowance of spender from a token owner.', () => {
     var instance;
     var allowanceSet = 100;
 
@@ -291,21 +306,66 @@ contract('TokenStorage', function(_accounts) {
   });
 
 
-  // it.only('Should set the allowance of a token owner and spend a part of the tokens.', () => {
-  //   var instance;
-  //   var allowance = 100;
-  //   var spends = 50;
-  //
-  //   return create.TokenStorage()
-  //     .then((_instance) => {
-  //       instance = _instance;
-  //
-  //       return instance.setAllowance(accounts[0], accounts[1]);
-  //     })
-  //     .then((allowance) => {
-  //       assert.equal(allowance, 0);
-  //     });
-  // });
+  it('Should increase the allowance of spender from a token owner.', () => {
+    var instance;
+    var allowanceSet = 100;
+    var allowanceIncrease = 50;
+
+    return create.TokenStorage()
+      .then((_instance) => {
+        instance = _instance;
+
+        return instance.setAllowance(accounts[0], accounts[1], allowanceSet, { from: accounts[0] });
+      })
+      .then((hasSetAllowance) => {
+        assert.notEqual(hasSetAllowance, null);
+
+        return instance.getAllowance.call(accounts[0], accounts[1]);
+      })
+      .then((allowance) => {
+        assert.equal(allowance.toNumber(), allowanceSet);
+
+        return instance.increaseAllowance(accounts[0], accounts[1], allowanceIncrease, { from: accounts[0] });
+      })
+      .then((hasIncreasedAllowance) => {
+        assert.notEqual(hasIncreasedAllowance, null);
+
+        return instance.getAllowance.call(accounts[0], accounts[1]);
+      })
+      .then((allowance) => {
+        assert.equal(allowance.toNumber(), allowanceSet + allowanceIncrease);
+      });
+  });
 
 
+  it('Should dencrease the allowance of spender from a token owner.', () => {
+    var instance;
+    var allowanceSet = 100;
+    var allowanceDecrease = 50;
+
+    return create.TokenStorage()
+      .then((_instance) => {
+        instance = _instance;
+
+        return instance.setAllowance(accounts[0], accounts[1], allowanceSet, { from: accounts[0] });
+      })
+      .then((hasSetAllowance) => {
+        assert.notEqual(hasSetAllowance, null);
+
+        return instance.getAllowance.call(accounts[0], accounts[1]);
+      })
+      .then((allowance) => {
+        assert.equal(allowance.toNumber(), allowanceSet);
+
+        return instance.decreaseAllowance(accounts[0], accounts[1], allowanceDecrease, { from: accounts[0] });
+      })
+      .then((hasDecreasedAllowance) => {
+        assert.notEqual(hasDecreasedAllowance, null);
+
+        return instance.getAllowance.call(accounts[0], accounts[1]);
+      })
+      .then((allowance) => {
+        assert.equal(allowance.toNumber(), allowanceSet - allowanceDecrease);
+      });
+  });
 });
