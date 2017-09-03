@@ -58,6 +58,15 @@ contract StandardToken is Owned {
 
 
   /**
+   * The token contract is not payable. If ether is sent to this address,
+   * send it back.
+   */
+  function () {
+    revert();
+  }
+
+
+  /**
    * Get the account balance of another account with address _owner
    *
    * @param _owner The address from which the balance will be retrieved
@@ -130,6 +139,18 @@ contract StandardToken is Owned {
 
     Approval(msg.sender, _spender, _value);
     return true;
+  }
+
+
+  /**
+   * Get the amount which _spender is still allowed to withdraw from _owner.
+   *
+   * @param _owner The address of the account owning tokens
+   * @param _spender The address of the account able to spend the tokens
+   * @return Allowance from _owner to _spender
+   */
+  function allowance(address _owner, address _spender) constant returns (uint256 _allowance) {
+    return balances.getAllowance(_owner, _spender);
   }
 
 
