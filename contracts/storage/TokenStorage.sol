@@ -1,18 +1,16 @@
-/**
- * Abstract user balances away from the token's business logic, making the
- * tokens upgradeable, and open for modular functionality to be added over time.
- */
 pragma solidity ^0.4.11;
 
 
 import "../lib/SafeMathLib.sol";
 import "../ownership/Owned.sol";
+import "../ownership/Modular.sol";
 
 
 /**
- * TokenStorage
+ * Abstract user balances away from the token's business logic, making the
+ * tokens upgradeable, and open for modular functionality to be added over time.
  */
-contract TokenStorage is Owned {
+contract TokenStorage is Owned, Modular {
   using SafeMathLib for uint;
 
 
@@ -26,7 +24,6 @@ contract TokenStorage is Owned {
    * Token balances, modules and allowances
    */
   mapping (address => uint256) public balances;
-  mapping (address => bool) public modules;
   mapping (address => mapping (address => uint256)) allowed;
 
 
@@ -170,41 +167,7 @@ contract TokenStorage is Owned {
 
 
   /**
-   * Set the activation status for a module at at address _module, showing what
-   * contracts can perform balance operations.
-   *
-   * @param _module The address of the module to be activated
-   * @param _active The activation status of the module
-   */
-  function setModule(address _module, bool _active) onlyOwner returns (bool _success) {
-    modules[_module] = _active;
-    ModuleSet(_module, _active);
-    return true;
-  }
-
-
-  /**
-   * Get the activation status of a module
-   *
-   * @param _module The address of the module
-   */
-  function getModule(address _module) constant returns (bool _success) {
-    return modules[_module];
-  }
-
-
-  /**
-   * Allow only modules to work with the token storage
-   */
-  modifier onlyModule() {
-    require(modules[msg.sender] == true);
-    _;
-  }
-
-
-  /**
    * Balance adjustment and module change events
    */
   event BalanceAdjustment(address indexed _module, address indexed _owner, uint _amount, string _polarity);
-  event ModuleSet(address indexed _module, bool indexed _active);
 }
