@@ -17,15 +17,6 @@ contract Owned {
 
 
   /**
-   * Allows only the contract owner to call the modified contract function
-   */
-  modifier onlyOwner {
-    require (msg.sender == owner);
-    _;
-  }
-
-
-  /**
    * Transfers contract ownership
    *
    * @param _newOwner The address of the new contract owner
@@ -33,5 +24,14 @@ contract Owned {
   function transferOwnership(address _newOwner) onlyOwner {
     require(_newOwner != address(0));
     owner = _newOwner;
+  }
+
+
+  /**
+   * Allows only the contract owner to call the modified contract function
+   */
+  modifier onlyOwner {
+    require (msg.sender == owner);
+    _;
   }
 }
