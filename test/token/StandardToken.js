@@ -5,14 +5,7 @@ contract('StandardToken', function(accounts) {
   const path = require('path');
   const config = require(path.join(__dirname, '..', 'helpers', 'config'));
   const create = require(path.join(__dirname, '..', 'helpers', 'create'))(accounts);
-
-
-  /**
-   * Initialization
-   */
-  const eventMachineError = (err) => {
-    assert.isTrue(err.toString().includes('VM Exception'));
-  }
+  const errors = require(path.join(__dirname, '..', 'helpers', 'errors'));
 
 
   /**
@@ -63,6 +56,36 @@ contract('StandardToken', function(accounts) {
   });
 
 
+  it('Should get total token supply.', () => {
+    var instance;
+
+    return create.StandardToken()
+      .then((_instance) => {
+        instance = _instance;
+
+        return instance.totalSupply.call();
+      })
+      .then((totalSupply) => {
+        assert.equal(totalSupply.toNumber(), config.token.totalSupply);
+      });
+  });
+
+
+  it('Should identify contract as a token.', () => {
+    var instance;
+
+    return create.StandardToken()
+      .then((_instance) => {
+        instance = _instance;
+
+        return instance.isToken.call();
+      })
+      .then((isToken) => {
+        assert.equal(isToken, true);
+      });
+  });
+
+
   /**
    * Transfer
    */
@@ -101,7 +124,7 @@ contract('StandardToken', function(accounts) {
       .then(() => {
         assert(false, 'The preceding call should have thrown an error.');
       })
-      .catch(eventMachineError);
+      .catch(errors.eventMachine);
   });
 
 
@@ -167,7 +190,7 @@ contract('StandardToken', function(accounts) {
       .then(() => {
         assert(false, 'The preceding call should have thrown an error.');
       })
-      .catch(eventMachineError);
+      .catch(errors.eventMachine);
   });
 
 
@@ -184,7 +207,7 @@ contract('StandardToken', function(accounts) {
       .then(() => {
         assert(false, 'The preceding call should have thrown an error.');
       })
-      .catch(eventMachineError);
+      .catch(errors.eventMachine);
   });
 
 
@@ -214,7 +237,7 @@ contract('StandardToken', function(accounts) {
   });
 
 
-  it.only('Should approve 100 from owner to spender, who spends 20 once.', () => {
+  it('Should approve 100 from owner to spender, who spends 20 once.', () => {
     var instance;
     var approvedTokens = 100;
     var spentTokens = 20;
@@ -268,7 +291,7 @@ contract('StandardToken', function(accounts) {
   });
 
 
-  it.only('Should approve 100 from owner to spender, who spends 50 twice.', () => {
+  it('Should approve 100 from owner to spender, who spends 50 twice.', () => {
     var instance;
     var approvedTokens = 100;
     var spentTokens = [50, 50];
@@ -332,7 +355,7 @@ contract('StandardToken', function(accounts) {
   });
 
 
-  it.only('Should approve 100 from owner to spender, who spends 50 and 60 (should fail).', () => {
+  it('Should approve 100 from owner to spender, who spends 50 and 60 (should fail).', () => {
     var instance;
     var approvedTokens = 100;
     var spentTokens = [50, 60];
@@ -378,11 +401,11 @@ contract('StandardToken', function(accounts) {
       .then(() => {
         assert(false, 'The preceding call should have thrown an error.');
       })
-      .catch(eventMachineError);
+      .catch(errors.eventMachine);
   });
 
 
-  it.only('Should attempt withdrawal with no allowance (should fail).', () => {
+  it('Should attempt withdrawal with no allowance (should fail).', () => {
     var instance;
     var approvedTokens = 0;
     var spentTokens = 100;
@@ -402,11 +425,11 @@ contract('StandardToken', function(accounts) {
       .then(() => {
         assert(false, 'The preceding call should have thrown an error.');
       })
-      .catch(eventMachineError);
+      .catch(errors.eventMachine);
   });
 
 
-  it.only('Should approve 100 from owner to spender, who spends 50. Owner modifies approval to 0 to spender, who attempts to spend 50. (should fail).', () => {
+  it('Should approve 100 from owner to spender, who spends 50. Owner modifies approval to 0 to spender, who attempts to spend 50. (should fail).', () => {
     var instance;
     var approvedTokens = [100, 0];
     var spentTokens = [50, 50];
@@ -462,11 +485,11 @@ contract('StandardToken', function(accounts) {
       .then(() => {
         assert(false, 'The preceding call should have thrown an error.');
       })
-      .catch(eventMachineError);
+      .catch(errors.eventMachine);
   });
 
 
-  it.only('Should approve max (2^256 - 1).', () => {
+  it('Should approve max (2^256 - 1).', () => {
     var instance;
 
     return create.StandardToken()
@@ -492,7 +515,7 @@ contract('StandardToken', function(accounts) {
    */
 
 
-  it.only('Should fire transfer event properly.', () => {
+  it('Should fire Transfer event properly.', () => {
     var instance;
     var transferredAmount = 100;
 
@@ -512,6 +535,22 @@ contract('StandardToken', function(accounts) {
   });
 
 
+  it('Should fire Approval event properly.', () => {
+    var instance;
+    var approvedAmount = 100;
 
+    return create.StandardToken()
+      .then((_instance) => {
+        instance = _instance;
 
+        return instance.approve(accounts[1], approvedAmount, { from: accounts[0] });
+      })
+      .then((approvalTransaction) => {
+        var approvalLog = approvalTransaction.logs.find((element) => element.event.match('Approval'));
+
+        assert.strictEqual(approvalLog.args._owner, accounts[0]);
+        assert.strictEqual(approvalLog.args._spender, accounts[1]);
+        assert.strictEqual(approvalLog.args._value.toNumber(), approvedAmount);
+      });
+  });
 });
