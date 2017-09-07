@@ -115,8 +115,8 @@ contract('StandardToken', function(accounts) {
         instance = _instance;
 
         return instance.transfer(accounts[1], transferredTokens, { from: accounts[0] });
-      }).then((hasTransferred) => {
-        assert.notEqual(hasTransferred, null);
+      }).then((transferTransaction) => {
+        assert.notEqual(transferTransaction, null);
 
         return instance.balanceOf.call(accounts[1]);
       }).then((balanceOfAccount1) => {
@@ -139,8 +139,8 @@ contract('StandardToken', function(accounts) {
         instance = _instance;
 
         return instance.transfer(accounts[1], transferredTokens, { from: accounts[0] });
-      }).then((hasTransferred) => {
-        assert.notEqual(hasTransferred, null);
+      }).then((transferTransaction) => {
+        assert.notEqual(transferTransaction, null);
 
         return instance.balanceOf.call(accounts[1]);
       }).then((balanceOfAccount1) => {
@@ -203,8 +203,8 @@ contract('StandardToken', function(accounts) {
 
         return instance.approve(accounts[1], approvedTokens, { from: accounts[0] });
       })
-      .then((hasApproved) => {
-        assert.notEqual(hasApproved, null);
+      .then((approvalTransaction) => {
+        assert.notEqual(approvalTransaction, null);
 
         return instance.allowance.call(accounts[0], accounts[1]);
       })
@@ -232,8 +232,8 @@ contract('StandardToken', function(accounts) {
 
         return instance.approve(accounts[1], approvedTokens, { from: accounts[0] });
       })
-      .then((hasApproved) => {
-        assert.notEqual(hasApproved, null);
+      .then((approvalTransaction) => {
+        assert.notEqual(approvalTransaction, null);
 
         return instance.balanceOf.call(accounts[2]);
       })
@@ -247,8 +247,8 @@ contract('StandardToken', function(accounts) {
 
         return instance.transferFrom(accounts[0], accounts[2], spentTokens, { from: accounts[1] });
       })
-      .then((hasTransferred) => {
-        assert.notEqual(hasTransferred, null);
+      .then((transferTransaction) => {
+        assert.notEqual(transferTransaction, null);
 
         return instance.allowance.call(accounts[0], accounts[1]);
       })
@@ -271,7 +271,7 @@ contract('StandardToken', function(accounts) {
   it.only('Should approve 100 from owner to spender, who spends 50 twice.', () => {
     var instance;
     var approvedTokens = 100;
-    var spentTokens = 50;
+    var spentTokens = [50, 50];
     var initialOwnerBalance;
 
     return create.StandardToken()
@@ -286,8 +286,8 @@ contract('StandardToken', function(accounts) {
 
         return instance.approve(accounts[1], approvedTokens, { from: accounts[0] });
       })
-      .then((hasApproved) => {
-        assert.notEqual(hasApproved, null);
+      .then((approvalTransaction) => {
+        assert.notEqual(approvalTransaction, null);
 
         return instance.balanceOf.call(accounts[2]);
       })
@@ -299,37 +299,218 @@ contract('StandardToken', function(accounts) {
       .then((allowance) => {
         assert.strictEqual(allowance.toNumber(), approvedTokens);
 
-        return instance.transferFrom(accounts[0], accounts[2], spentTokens, { from: accounts[1] });
+        return instance.transferFrom(accounts[0], accounts[2], spentTokens[0], { from: accounts[1] });
       })
-      .then((hasTransferred) => {
-        assert.notEqual(hasTransferred, null);
+      .then((transferTransaction) => {
+        assert.notEqual(transferTransaction, null);
 
         return instance.allowance.call(accounts[0], accounts[1]);
       })
       .then((allowance) => {
-        assert.strictEqual(allowance.toNumber(), approvedTokens - spentTokens);
+        assert.strictEqual(allowance.toNumber(), approvedTokens - spentTokens[0]);
 
-        return instance.transferFrom(accounts[0], accounts[2], spentTokens, { from: accounts[1] });
+        return instance.transferFrom(accounts[0], accounts[2], spentTokens[1], { from: accounts[1] });
       })
-      .then((hasTransferred) => {
-        assert.notEqual(hasTransferred, null);
+      .then((transferTransaction) => {
+        assert.notEqual(transferTransaction, null);
 
         return instance.allowance.call(accounts[0], accounts[1]);
       })
       .then((allowance) => {
-        assert.strictEqual(allowance.toNumber(), approvedTokens - 2 * spentTokens);
+        assert.strictEqual(allowance.toNumber(), approvedTokens - (spentTokens[0] + spentTokens[1]));
 
         return instance.balanceOf.call(accounts[2]);
       })
       .then((receiverBalance) => {
-        assert.strictEqual(receiverBalance.toNumber(), 2 * spentTokens);
+        assert.strictEqual(receiverBalance.toNumber(), spentTokens[0] + spentTokens[1]);
 
         return instance.balanceOf.call(accounts[0]);
       })
       .then((finalOwnerBalance) => {
-        assert.strictEqual(finalOwnerBalance.toNumber(), initialOwnerBalance - 2 * spentTokens)
+        assert.strictEqual(finalOwnerBalance.toNumber(), initialOwnerBalance - (spentTokens[0] + spentTokens[1]))
       });
   });
+
+
+  it.only('Should approve 100 from owner to spender, who spends 50 and 60 (should fail).', () => {
+    var instance;
+    var approvedTokens = 100;
+    var spentTokens = [50, 60];
+    var initialOwnerBalance;
+
+    return create.StandardToken()
+      .then((_instance) => {
+        instance = _instance;
+
+        return instance.balanceOf.call(accounts[0]);
+      })
+      .then((_initialOwnerBalance) => {
+        initialOwnerBalance = _initialOwnerBalance.toNumber();
+        assert.strictEqual(initialOwnerBalance, config.token.totalSupply);
+
+        return instance.approve(accounts[1], approvedTokens, { from: accounts[0] });
+      })
+      .then((approvalTransaction) => {
+        assert.notEqual(approvalTransaction, null);
+
+        return instance.balanceOf.call(accounts[2]);
+      })
+      .then((initialSpenderBalance) => {
+        assert.strictEqual(initialSpenderBalance.toNumber(), 0);
+
+        return instance.allowance.call(accounts[0], accounts[1]);
+      })
+      .then((allowance) => {
+        assert.strictEqual(allowance.toNumber(), approvedTokens);
+
+        return instance.transferFrom(accounts[0], accounts[2], spentTokens[0], { from: accounts[1] });
+      })
+      .then((transferTransaction) => {
+        assert.notEqual(transferTransaction, null);
+
+        return instance.allowance.call(accounts[0], accounts[1]);
+      })
+      .then((allowance) => {
+        assert.strictEqual(allowance.toNumber(), approvedTokens - spentTokens[0]);
+
+        return instance.transferFrom(accounts[0], accounts[2], spentTokens[1], { from: accounts[1] });
+      })
+      .then(() => {
+        assert(false, 'The preceding call should have thrown an error.');
+      })
+      .catch(eventMachineError);
+  });
+
+
+  it.only('Should attempt withdrawal with no allowance (should fail).', () => {
+    var instance;
+    var approvedTokens = 0;
+    var spentTokens = 100;
+    var initialOwnerBalance;
+
+    return create.StandardToken()
+      .then((_instance) => {
+        instance = _instance;
+
+        return instance.allowance.call(accounts[0], accounts[1]);
+      })
+      .then((allowance) => {
+        assert.strictEqual(allowance.toNumber(), approvedTokens);
+
+        return instance.transferFrom(accounts[0], accounts[2], spentTokens, { from: accounts[1] });
+      })
+      .then(() => {
+        assert(false, 'The preceding call should have thrown an error.');
+      })
+      .catch(eventMachineError);
+  });
+
+
+  it.only('Should approve 100 from owner to spender, who spends 50. Owner modifies approval to 0 to spender, who attempts to spend 50. (should fail).', () => {
+    var instance;
+    var approvedTokens = [100, 0];
+    var spentTokens = [50, 50];
+    var initialOwnerBalance;
+
+    return create.StandardToken()
+      .then((_instance) => {
+        instance = _instance;
+
+        return instance.balanceOf.call(accounts[0]);
+      })
+      .then((_initialOwnerBalance) => {
+        initialOwnerBalance = _initialOwnerBalance.toNumber();
+        assert.strictEqual(initialOwnerBalance, config.token.totalSupply);
+
+        return instance.approve(accounts[1], approvedTokens[0], { from: accounts[0] });
+      })
+      .then((approvalTransaction) => {
+        assert.notEqual(approvalTransaction, null);
+
+        return instance.balanceOf.call(accounts[2]);
+      })
+      .then((initialSpenderBalance) => {
+        assert.strictEqual(initialSpenderBalance.toNumber(), 0);
+
+        return instance.allowance.call(accounts[0], accounts[1]);
+      })
+      .then((allowance) => {
+        assert.strictEqual(allowance.toNumber(), approvedTokens[0]);
+
+        return instance.transferFrom(accounts[0], accounts[2], spentTokens[0], { from: accounts[1] });
+      })
+      .then((transferTransaction) => {
+        assert.notEqual(transferTransaction, null);
+
+        return instance.allowance.call(accounts[0], accounts[1]);
+      })
+      .then((allowance) => {
+        assert.strictEqual(allowance.toNumber(), approvedTokens[0] - spentTokens[0]);
+
+        return instance.approve(accounts[1], approvedTokens[1], { from: accounts[0] })
+      })
+      .then((approvalTransaction) => {
+        assert.notEqual(approvalTransaction, null);
+
+        return instance.allowance.call(accounts[0], accounts[1]);
+      })
+      .then((allowance) => {
+        assert.strictEqual(allowance.toNumber(), approvedTokens[1]);
+
+        return instance.transferFrom(accounts[0], accounts[2], spentTokens[1], { from: accounts[1] });
+      })
+      .then(() => {
+        assert(false, 'The preceding call should have thrown an error.');
+      })
+      .catch(eventMachineError);
+  });
+
+
+  it.only('Should approve max (2^256 - 1).', () => {
+    var instance;
+
+    return create.StandardToken()
+      .then((_instance) => {
+        instance = _instance;
+
+        return instance.approve(accounts[1], '115792089237316195423570985008687907853269984665640564039457584007913129639935', { from: accounts[0] });
+      })
+      .then((approvalTransaction) => {
+        assert.notEqual(approvalTransaction, null);
+
+        return instance.allowance(accounts[0], accounts[1]);
+      })
+      .then((result) => {
+        var match = result.equals('1.15792089237316195423570985008687907853269984665640564039457584007913129639935e+77');
+        assert.isTrue(match);
+      });
+  });
+
+
+  /**
+   * Events
+   */
+
+
+  it.only('Should fire transfer event properly.', () => {
+    var instance;
+    var transferredAmount = 100;
+
+    return create.StandardToken()
+      .then((_instance) => {
+        instance = _instance;
+
+        return instance.transfer(accounts[1], transferredAmount, { from: accounts[0] });
+      })
+      .then((transferTransaction) => {
+        var transferLog = transferTransaction.logs.find((element) => element.event.match('Transfer'));
+
+        assert.strictEqual(transferLog.args._from, accounts[0]);
+        assert.strictEqual(transferLog.args._to, accounts[1]);
+        assert.strictEqual(transferLog.args._value.toNumber(), transferredAmount);
+      });
+  });
+
 
 
 
