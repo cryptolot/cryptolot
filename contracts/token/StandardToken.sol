@@ -1,11 +1,3 @@
-/**
- * This Token Contract implements the full ERC 20 Token standard
- * https://github.com/ethereum/EIPs/issues/20
- *
- * 1) Initial Finite Supply (upon creation one specifies how much is minted).
- * 2) In the absence of a token registry: Optional Decimal, Symbol & Name.
- * 3) Optional approveAndCall() functionality to notify a contract if an approval() has occurred.
- */
 pragma solidity ^0.4.11;
 
 
@@ -15,9 +7,14 @@ import "../storage/TokenStorage.sol";
 
 
 /**
- * Standard ERC20 Token
+ * This Token Contract implements the full ERC 20 Token standard
+ * https://github.com/ethereum/EIPs/issues/20
+ *
+ * 1) Initial Finite Supply (upon creation one specifies how much is minted).
+ * 2) In the absence of a token registry: Optional Decimal, Symbol & Name.
+ * 3) Optional approveAndCall() functionality to notify a contract if an approval() has occurred.
  */
-contract StandardToken is Owned {
+contract StandardToken is Owned, Modular {
   using SafeMathLib for uint;
 
 
