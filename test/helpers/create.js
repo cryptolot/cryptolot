@@ -11,6 +11,7 @@ const config = require(path.join(__dirname, 'config'));
 var SafeMathLib = artifacts.require("./lib/SafeMathLib.sol");
 var TokenStorage = artifacts.require("./storage/TokenStorage.sol");
 var StandardToken = artifacts.require("./token/StandardToken.sol");
+var MintableToken = artifacts.require("./token/MintableToken.sol");
 
 
 /**
@@ -29,16 +30,15 @@ module.exports = function(accounts) {
       .then((_instance) => {
         instance = _instance;
 
-        return instance.setModule(accounts[0], true, { from: accounts[0] });
-      }).then((hasSetModule) => {
-        assert.notEqual(hasSetModule, null);
-
         return instance;
       });
   };
 
 
-  create.StandardToken = (options) => {
+  /**
+   * General token constructor
+   */
+  create.Token = (TokenType, options) => {
     var instance;
     var tokenStorage;
 
@@ -48,7 +48,7 @@ module.exports = function(accounts) {
       .then((_tokenStorage) => {
         tokenStorage = _tokenStorage;
 
-        return StandardToken.new(options.name, options.symbol, options.decimals, tokenStorage.address);
+        return TokenType.new(options.name, options.symbol, options.decimals, tokenStorage.address);
       })
       .then((_instance) => {
         instance = _instance;
@@ -60,6 +60,16 @@ module.exports = function(accounts) {
 
         return instance;
       });
+  };
+
+
+  create.StandardToken = (options) => {
+    return create.Token(StandardToken, options);
+  };
+
+
+  create.MintableToken = (options) => {
+    return create.Token(MintableToken, options);
   };
 
 
