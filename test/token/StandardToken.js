@@ -16,7 +16,7 @@ contract('StandardToken', function(accounts) {
   it('Should create a new standard token.', () => {
     var instance;
 
-    return create.StandardToken()
+    return create.Token()
       .then((_instance) => {
         instance = _instance;
 
@@ -44,7 +44,7 @@ contract('StandardToken', function(accounts) {
 
 
   it('Should create over 2^256 - 1 (max) tokens', () => {
-    return create.StandardToken({ totalSupply: '115792089237316195423570985008687907853269984665640564039457584007913129639935' })
+    return create.Token({ totalSupply: '115792089237316195423570985008687907853269984665640564039457584007913129639935' })
       .then(function(instance) {
         return instance.totalSupply.call();
       })
@@ -59,7 +59,7 @@ contract('StandardToken', function(accounts) {
   it('Should get total token supply.', () => {
     var instance;
 
-    return create.StandardToken()
+    return create.Token()
       .then((_instance) => {
         instance = _instance;
 
@@ -74,7 +74,7 @@ contract('StandardToken', function(accounts) {
   it('Should identify contract as a token.', () => {
     var instance;
 
-    return create.StandardToken()
+    return create.Token()
       .then((_instance) => {
         instance = _instance;
 
@@ -94,7 +94,7 @@ contract('StandardToken', function(accounts) {
   it('Should get token owner balance.', () => {
     var instance;
 
-    return create.StandardToken()
+    return create.Token()
       .then((_instance) => {
         instance = _instance;
 
@@ -109,7 +109,7 @@ contract('StandardToken', function(accounts) {
   it('Should reverse ether transfer to token contract.', () => {
     var instance;
 
-    return create.StandardToken()
+    return create.Token()
       .then((_instance) => {
         instance = _instance;
 
@@ -133,7 +133,7 @@ contract('StandardToken', function(accounts) {
     var totalTokens = 10000;
     var transferredTokens = 5000;
 
-    return create.StandardToken({ totalSupply: totalTokens })
+    return create.Token({ totalSupply: totalTokens })
       .then((_instance) => {
         instance = _instance;
 
@@ -157,7 +157,7 @@ contract('StandardToken', function(accounts) {
     var totalTokens = 10000;
     var transferredTokens = 10000;
 
-    return create.StandardToken({ totalSupply: totalTokens })
+    return create.Token({ totalSupply: totalTokens })
       .then((_instance) => {
         instance = _instance;
 
@@ -181,7 +181,7 @@ contract('StandardToken', function(accounts) {
     var totalTokens = 10000;
     var transferredTokens = 10001;
 
-    return create.StandardToken({ totalSupply: totalTokens })
+    return create.Token({ totalSupply: totalTokens })
       .then((_instance) => {
         instance = _instance;
 
@@ -198,7 +198,7 @@ contract('StandardToken', function(accounts) {
     var instance;
     var transferredTokens = 0;
 
-    return create.StandardToken()
+    return create.Token()
       .then((_instance) => {
         instance = _instance;
 
@@ -220,7 +220,7 @@ contract('StandardToken', function(accounts) {
     var instance;
     var approvedTokens = 100;
 
-    return create.StandardToken()
+    return create.Token()
       .then((_instance) => {
         instance = _instance;
 
@@ -243,7 +243,7 @@ contract('StandardToken', function(accounts) {
     var spentTokens = 20;
     var initialOwnerBalance;
 
-    return create.StandardToken()
+    return create.Token()
       .then((_instance) => {
         instance = _instance;
 
@@ -297,7 +297,7 @@ contract('StandardToken', function(accounts) {
     var spentTokens = [50, 50];
     var initialOwnerBalance;
 
-    return create.StandardToken()
+    return create.Token()
       .then((_instance) => {
         instance = _instance;
 
@@ -361,7 +361,7 @@ contract('StandardToken', function(accounts) {
     var spentTokens = [50, 60];
     var initialOwnerBalance;
 
-    return create.StandardToken()
+    return create.Token()
       .then((_instance) => {
         instance = _instance;
 
@@ -411,7 +411,7 @@ contract('StandardToken', function(accounts) {
     var spentTokens = 100;
     var initialOwnerBalance;
 
-    return create.StandardToken()
+    return create.Token()
       .then((_instance) => {
         instance = _instance;
 
@@ -435,7 +435,7 @@ contract('StandardToken', function(accounts) {
     var spentTokens = [50, 50];
     var initialOwnerBalance;
 
-    return create.StandardToken()
+    return create.Token()
       .then((_instance) => {
         instance = _instance;
 
@@ -492,7 +492,7 @@ contract('StandardToken', function(accounts) {
   it('Should approve max (2^256 - 1).', () => {
     var instance;
 
-    return create.StandardToken()
+    return create.Token()
       .then((_instance) => {
         instance = _instance;
 
@@ -519,7 +519,7 @@ contract('StandardToken', function(accounts) {
     var instance;
     var transferredAmount = 100;
 
-    return create.StandardToken()
+    return create.Token()
       .then((_instance) => {
         instance = _instance;
 
@@ -539,7 +539,7 @@ contract('StandardToken', function(accounts) {
     var instance;
     var approvedAmount = 100;
 
-    return create.StandardToken()
+    return create.Token()
       .then((_instance) => {
         instance = _instance;
 
