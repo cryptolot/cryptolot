@@ -9,7 +9,7 @@ const path = require('path');
  */
 var SafeMathLib = artifacts.require("./lib/SafeMathLib.sol");
 var TokenStorage = artifacts.require("./storage/TokenStorage.sol");
-var Token = artifacts.require("./StandardToken.sol");
+var Token = artifacts.require("./LotteryToken.sol");
 // var Crowdsale = artifacts.require("./Crowdsale.sol");
 
 
@@ -32,10 +32,8 @@ module.exports = function(deployer) {
     return TokenStorage.deployed();
   }).then((_tokenStorage) => {
     // Deploy token and link to deployed token storage.
-    deployer.deploy(Token, config.token.name, config.token.symbol, config.token.decimals, TokenStorage.address).then(() => {
-      // Add the token contract as a token storage module to allow it to
-      // interact with the storage.
-      _tokenStorage.setModule(Token.address, true);
+    deployer.deploy(Token, config.token.name, config.token.symbol, config.token.decimals, _tokenStorage.address).then(() => {
+
 
       return Token.deployed();
     });

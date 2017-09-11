@@ -10,8 +10,7 @@ const config = require(path.join(__dirname, 'config'));
  */
 var SafeMathLib = artifacts.require("./lib/SafeMathLib.sol");
 var TokenStorage = artifacts.require("./storage/TokenStorage.sol");
-var StandardToken = artifacts.require("./token/StandardToken.sol");
-var MintableToken = artifacts.require("./token/MintableToken.sol");
+var Token = artifacts.require("./LotteryToken.sol");
 
 
 /**
@@ -38,7 +37,7 @@ module.exports = function(accounts) {
   /**
    * General token constructor
    */
-  create.Token = (TokenType, options) => {
+  create.Token = (options) => {
     var instance;
     var tokenStorage;
 
@@ -48,7 +47,7 @@ module.exports = function(accounts) {
       .then((_tokenStorage) => {
         tokenStorage = _tokenStorage;
 
-        return TokenType.new(options.name, options.symbol, options.decimals, tokenStorage.address);
+        return Token.new(options.name, options.symbol, options.decimals, tokenStorage.address);
       })
       .then((_instance) => {
         instance = _instance;
@@ -60,16 +59,6 @@ module.exports = function(accounts) {
 
         return instance;
       });
-  };
-
-
-  create.StandardToken = (options) => {
-    return create.Token(StandardToken, options);
-  };
-
-
-  create.MintableToken = (options) => {
-    return create.Token(MintableToken, options);
   };
 
 

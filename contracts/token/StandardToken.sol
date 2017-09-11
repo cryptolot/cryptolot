@@ -44,17 +44,6 @@ contract StandardToken is Owned, Modular {
 
 
   /**
-   * StandardToken
-   */
-  function StandardToken(string _name, string _symbol, uint8 _decimals, address _tokenStorage) {
-    balances = TokenStorage(_tokenStorage);                   // Token storage creation
-    name = _name;                                             // Set the name for display purposes
-    symbol = _symbol;                                         // Set the symbol for display purposes
-    decimals = _decimals;                                     // Amount of decimals for display purposes
-  }
-
-
-  /**
    * The token contract is not payable. If ether is sent to this address,
    * send it back.
    */
