@@ -91,48 +91,48 @@ contract('MintableToken', function(accounts) {
   });
 
 
-    it('Should be unable to mint tokens if minting is disabled.', () => {
-      var instance;
-      var mintedAmount = 100;
+  it('Should be unable to mint tokens if minting is disabled.', () => {
+    var instance;
+    var mintedAmount = 100;
 
-      return create.Token()
-        .then((_instance) => {
-          instance = _instance;
+    return create.Token()
+      .then((_instance) => {
+        instance = _instance;
 
-          return instance.setMintable(false, { from: accounts[0] });
-        })
-        .then((setMintableTransaction) => {
-          assert.notEqual(setMintableTransaction, null);
+        return instance.setMintable(false, { from: accounts[0] });
+      })
+      .then((setMintableTransaction) => {
+        assert.notEqual(setMintableTransaction, null);
 
-          return instance.mintable.call();
-        })
-        .then((mintable) => {
-          assert.equal(mintable, false);
+        return instance.mintable.call();
+      })
+      .then((mintable) => {
+        assert.equal(mintable, false);
 
-          return instance.mint(accounts[0], mintedAmount, { from: accounts[0] });
-        })
-        .then(() => {
-          assert(false, 'The preceding call should have thrown an error.');
-        })
-        .catch(errors.eventMachine);
-    });
+        return instance.mint(accounts[0], mintedAmount, { from: accounts[0] });
+      })
+      .then(() => {
+        assert(false, 'The preceding call should have thrown an error.');
+      })
+      .catch(errors.eventMachine);
+  });
 
 
-    it('Should be unable to mint tokens if not contract owner.', () => {
-      var instance;
-      var mintedAmount = 100;
+  it('Should be unable to mint tokens if not contract owner.', () => {
+    var instance;
+    var mintedAmount = 100;
 
-      return create.Token()
-        .then((_instance) => {
-          instance = _instance;
+    return create.Token()
+      .then((_instance) => {
+        instance = _instance;
 
-          return instance.mint(accounts[0], mintedAmount, { from: accounts[1] });
-        })
-        .then(() => {
-          assert(false, 'The preceding call should have thrown an error.');
-        })
-        .catch(errors.eventMachine);
-    });
+        return instance.mint(accounts[0], mintedAmount, { from: accounts[1] });
+      })
+      .then(() => {
+        assert(false, 'The preceding call should have thrown an error.');
+      })
+      .catch(errors.eventMachine);
+  });
 
 
   /**
