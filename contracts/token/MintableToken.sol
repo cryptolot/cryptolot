@@ -1,11 +1,12 @@
-pragma solidity ^0.4.6;
+pragma solidity ^0.4.11;
 
 
 import "../lib/SafeMathLib.sol";
 import "./StandardToken.sol";
 
+
 /**
- * A token that can increase its supply by another contract.
+ * A token that can increase its supply through another contract.
  *
  * This allows uncapped crowdsale by dynamically increasing the supply when money pours in.
  * Only mint agents, contracts whitelisted by owner, can mint new tokens.
