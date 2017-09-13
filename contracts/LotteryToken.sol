@@ -3,12 +3,13 @@ pragma solidity ^0.4.11;
 
 import "./lib/SafeMathLib.sol";
 import "./token/MintableToken.sol";
-/*import "./token/BurnableToken.sol";
+import "./token/BurnableToken.sol";
+/*
 import "./token/UpgradeableToken.sol";*/
 
 
 /*contract LotteryToken is UpgradeableToken, MintableToken, BurnableToken {*/
-contract LotteryToken is MintableToken {
+contract LotteryToken is MintableToken, BurnableToken {
   /**
    * LotteryToken
    */
